@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { InvestmentPlan } from '../../types';
 import { formatCurrency } from '../../lib/utils';
-import { TrendingUp, ShieldCheck, Info, ArrowRight } from 'lucide-react';
+import { TrendingUp, ShieldCheck, Info, ArrowRight, User, Database, Percent } from 'lucide-react';
 import FeedbackForm from './FeedbackForm';
 
 interface PlanDisplayProps {
@@ -62,7 +62,29 @@ export default function InvestmentPlanDisplay({ plan, onFeedbackSubmit }: PlanDi
                       <div className="text-[10px] text-quipu-cream/40 uppercase">Allocation</div>
                     </div>
                   </div>
-                  <p className="text-sm text-quipu-cream/60 mb-4 italic">"{fund.justification}"</p>
+                  <p className="text-sm text-quipu-cream/60 mb-6 italic">"{fund.justification}"</p>
+                  
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6 p-4 bg-quipu-forest/10 rounded-xl border border-quipu-sage/5">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-1.5 text-[10px] text-quipu-gold font-bold uppercase tracking-wider">
+                        <User size={12} /> Manager
+                      </div>
+                      <div className="text-sm font-medium text-quipu-cream">{fund.fundManager}</div>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-1.5 text-[10px] text-quipu-gold font-bold uppercase tracking-wider">
+                        <Database size={12} /> AUM
+                      </div>
+                      <div className="text-sm font-medium text-quipu-cream">{fund.aum}</div>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-1.5 text-[10px] text-quipu-gold font-bold uppercase tracking-wider">
+                        <Percent size={12} /> Exp. Ratio
+                      </div>
+                      <div className="text-sm font-medium text-quipu-cream">{fund.expenseRatio}</div>
+                    </div>
+                  </div>
+
                   <div className="flex items-center gap-4 text-xs">
                     <div className="flex items-center gap-1 text-quipu-sage">
                       <TrendingUp size={14} />

@@ -16,6 +16,7 @@ export async function generateInvestmentPlan(profile: UserProfile): Promise<Inve
     - Goals: ${profile.goals.join(', ')}
 
     Provide a summary of the strategy and 3-5 specific fund category recommendations with justifications.
+    For each fund, include the fund manager's name, current AUM (Assets Under Management in ₹ Crores), and the expense ratio percentage.
     Be professional, data-driven, and explain the "why" behind each choice.
   `;
 
@@ -37,9 +38,12 @@ export async function generateInvestmentPlan(profile: UserProfile): Promise<Inve
                 category: { type: Type.STRING },
                 allocation: { type: Type.NUMBER, description: "Percentage allocation (0-100)" },
                 expectedReturn: { type: Type.NUMBER, description: "Annualized expected return percentage" },
-                justification: { type: Type.STRING }
+                justification: { type: Type.STRING },
+                fundManager: { type: Type.STRING },
+                aum: { type: Type.STRING, description: "AUM in ₹ Crores (e.g., '₹12,450 Cr')" },
+                expenseRatio: { type: Type.STRING, description: "Expense ratio percentage (e.g., '0.75%')" }
               },
-              required: ["name", "category", "allocation", "expectedReturn", "justification"]
+              required: ["name", "category", "allocation", "expectedReturn", "justification", "fundManager", "aum", "expenseRatio"]
             }
           }
         },

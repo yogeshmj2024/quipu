@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Compass, LayoutDashboard, UserPlus, Info } from 'lucide-react';
+import { Compass, LayoutDashboard, UserPlus, Info, Share2, GraduationCap, Coins, Calculator } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 interface NavbarProps {
@@ -13,6 +13,10 @@ export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
     { id: 'home', label: 'Home', icon: Compass },
     { id: 'onboard', label: 'Onboard', icon: UserPlus },
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'sip', label: 'SIP', icon: Coins },
+    { id: 'calculators', label: 'Calculators', icon: Calculator },
+    { id: 'partners', label: 'Partners', icon: Share2 },
+    { id: 'learning', label: 'Learning', icon: GraduationCap },
     { id: 'about', label: 'About', icon: Info },
   ];
 

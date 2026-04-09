@@ -6,15 +6,49 @@ import OnboardingForm from './components/onboarding/OnboardingForm';
 import InvestmentPlanDisplay from './components/dashboard/InvestmentPlanDisplay';
 import Dashboard from './components/dashboard/Dashboard';
 import KYCModule from './components/kyc/KYCModule';
+import Partners from './components/partners/Partners';
+import Learning from './components/learning/Learning';
+import SIPDashboard from './components/dashboard/SIPDashboard';
+import Calculators from './components/calculators/Calculators';
 import { UserProfile, InvestmentPlan } from './types';
 import { generateInvestmentPlan } from './lib/gemini';
+import { auth, googleProvider, signInWithPopup, signOut, onAuthStateChanged, User as FirebaseUser } from './lib/firebase';
 import { motion, AnimatePresence } from 'motion/react';
+import { Linkedin, Instagram, ExternalLink, LogIn, LogOut, User as UserIcon } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('home');
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentPlan, setCurrentPlan] = useState<InvestmentPlan | null>(null);
   const [savedPlans, setSavedPlans] = useState<InvestmentPlan[]>([]);
+  const [user, setUser] = useState<FirebaseUser | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
+
+  // Auth Listener
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setAuthLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogin = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch (error) {
+      console.error("Login failed", error);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      setActiveTab('home');
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
+  };
 
   // Load saved plans from localStorage
   useEffect(() => {
@@ -113,6 +147,42 @@ export default function App() {
     <div className="min-h-screen">
       <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
       
+      {/* Auth Bar */}
+      <div className="fixed top-4 right-6 z-[60] flex items-center gap-4">
+        {authLoading ? (
+          <div className="w-8 h-8 rounded-full bg-quipu-sage/20 animate-pulse" />
+        ) : user ? (
+          <div className="flex items-center gap-3 bg-quipu-deep/80 backdrop-blur-xl border border-quipu-sage/20 p-1.5 pr-4 rounded-full shadow-2xl">
+            {user.photoURL ? (
+              <img src={user.photoURL} alt={user.displayName || ''} className="w-8 h-8 rounded-full border border-quipu-gold/30" referrerPolicy="no-referrer" />
+            ) : (
+              <div className="w-8 h-8 rounded-full bg-quipu-gold flex items-center justify-center text-quipu-deep">
+                <UserIcon size={16} />
+              </div>
+            )}
+            <div className="hidden sm:block">
+              <p className="text-[10px] text-quipu-cream/40 font-bold uppercase tracking-tighter leading-none">Verified Client</p>
+              <p className="text-xs font-bold text-quipu-cream truncate max-w-[100px]">{user.displayName}</p>
+            </div>
+            <button 
+              onClick={handleLogout}
+              className="ml-2 p-2 text-quipu-cream/40 hover:text-red-400 transition-colors"
+              title="Logout"
+            >
+              <LogOut size={16} />
+            </button>
+          </div>
+        ) : (
+          <button 
+            onClick={handleLogin}
+            className="flex items-center gap-2 px-4 py-2 bg-quipu-gold text-quipu-deep text-xs font-bold rounded-full hover:scale-105 transition-all shadow-xl shadow-quipu-gold/20"
+          >
+            <LogIn size={16} />
+            Login with Google
+          </button>
+        )}
+      </div>
+
       <main className="pt-16">
         <AnimatePresence mode="wait">
           {activeTab === 'home' && (
@@ -195,6 +265,50 @@ export default function App() {
             </motion.div>
           )}
 
+          {activeTab === 'sip' && (
+            <motion.div
+              key="sip"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <SIPDashboard plans={savedPlans} />
+            </motion.div>
+          )}
+
+          {activeTab === 'calculators' && (
+            <motion.div
+              key="calculators"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <Calculators />
+            </motion.div>
+          )}
+
+          {activeTab === 'partners' && (
+            <motion.div
+              key="partners"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <Partners />
+            </motion.div>
+          )}
+
+          {activeTab === 'learning' && (
+            <motion.div
+              key="learning"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <Learning />
+            </motion.div>
+          )}
+
           {activeTab === 'about' && (
             <motion.div
               key="about"
@@ -223,6 +337,46 @@ export default function App() {
                   <div className="bg-quipu-forest/20 p-6 rounded-2xl border border-quipu-sage/20">
                     <h3 className="text-quipu-gold font-bold mb-2">Phase 3</h3>
                     <p className="text-sm">Self-Learning AI for autonomous finance (Year 5+)</p>
+                  </div>
+                </div>
+
+                <div className="pt-16 border-t border-quipu-sage/20">
+                  <h2 className="text-3xl font-bold mb-8">The <span className="text-quipu-gold">Founding</span> Team</h2>
+                  <div className="flex flex-col md:flex-row gap-8 items-center bg-quipu-forest/10 p-8 rounded-3xl border border-quipu-sage/10">
+                    <div className="w-32 h-32 bg-quipu-gold rounded-2xl flex items-center justify-center text-quipu-deep font-bold text-4xl shrink-0 rotate-3 shadow-xl">
+                      YM
+                    </div>
+                    <div className="space-y-4">
+                      <div>
+                        <h3 className="text-2xl font-bold text-quipu-cream">Yogesh MJ</h3>
+                        <p className="text-quipu-gold font-mono text-sm uppercase tracking-widest">Founder & Visionary</p>
+                      </div>
+                      <p className="text-quipu-cream/60 leading-relaxed">
+                        A new-age technologist and financial strategist dedicated to democratizing wealth through artificial intelligence. Yogesh envisions a world where financial intelligence is a universal utility, not a privileged service.
+                      </p>
+                      <div className="flex gap-4">
+                        <a 
+                          href="https://www.linkedin.com/in/mjyogesh" 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-xs font-bold text-quipu-gold hover:text-quipu-cream transition-colors"
+                        >
+                          <Linkedin size={16} />
+                          LinkedIn
+                          <ExternalLink size={12} />
+                        </a>
+                        <a 
+                          href="https://www.instagram.com/yogeshmj/" 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-xs font-bold text-quipu-gold hover:text-quipu-cream transition-colors"
+                        >
+                          <Instagram size={16} />
+                          Instagram
+                          <ExternalLink size={12} />
+                        </a>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

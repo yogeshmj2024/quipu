@@ -20,6 +20,9 @@ export interface FundRecommendation {
   allocation: number;
   expectedReturn: number;
   justification: string;
+  fundManager: string;
+  aum: string;
+  expenseRatio: string;
 }
 
 export interface InvestmentPlan {
