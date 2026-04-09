@@ -1,0 +1,5 @@
+{
+  "name": "Quipu",
+  "description": "The AI Guru for Smarter Investments. AI-powered mutual fund advisory and autonomous financial intelligence.",
+  "requestFramePermissions": ["camera", "microphone"]
+}
